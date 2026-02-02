@@ -23,6 +23,7 @@ export  function UsersList({ data, handleEdit }){
                 <TouchableOpacity style={styles.button} onPress={handleDeleteItem}>
                     <Text style={styles.buttonText}>Deletar usuario</Text>
                 </TouchableOpacity>
+                
                 <TouchableOpacity style={styles.button1} onPress={handleEditUsers}>
                     <Text style={styles.buttonText}>Editar usuario</Text>
                 </TouchableOpacity>
