@@ -3,11 +3,13 @@ import {View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList } from "re
 import { FormUsers } from "./src/FormUsers"
 import { auth } from './src/firebaseConnection'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut} from 'firebase/auth'
+import { loadBundle } from "firebase/firestore";
 
 export default function App(){
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [authUser, setAuthUser] = useState(null);
+  const [laoding, setLaoding] = useState(true)
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -16,8 +18,14 @@ export default function App(){
           email: user.email, 
           uid: user.uid
         })
+
+        setLaoding(false);
         return;
       }
+
+      setAuthUser(null);
+      setLaoding(false);
+
     })
   },[])
 
@@ -49,9 +57,19 @@ export default function App(){
     setAuthUser(null);
   }
 
+  if(authUser){
+    return(
+      <View style={styles.container}>
+        <FormUsers />
+      </View>
+    )
+  }
+
   return(
     <View style={styles.container}>
-      <Text style={styles.userLoga}>Usuario logado: {authUser && authUser.email}</Text>
+      {laoding && (
+        <Text style={styles.loading}>Carregando informacoes...</Text>
+      )}
 
       <Text style={styles.text1}>Email: </Text>
       <TextInput 
@@ -78,9 +96,12 @@ export default function App(){
         <Text style={styles.buttonText}>Criar uma conta</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.buttonLogin1} onPress={handleLogout}>
-        <Text style={styles.buttonText}> Sair da conta</Text>
-      </TouchableOpacity>
+      {authUser && (
+        <TouchableOpacity style={styles.buttonLogin1} onPress={handleLogout}>
+          <Text style={styles.buttonText}> Sair da conta</Text>
+        </TouchableOpacity>
+      )}
+
     </View>
   );
 } 
@@ -91,11 +112,11 @@ const styles = StyleSheet.create({
     paddingTop: 40
   },
 
-  userLoga: {
-    fontSize: 16, 
-    color: "#000", 
+  loading: {
+    fontSize: 20, 
     marginLeft: 8, 
-    marginBottom: 14
+    marginBottom: 8,
+    color: "#000"
   },
 
   text1: {
