@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useRef, cloneElement } from "react";
+import React, { useEffect, useState, useRef, cloneElement, useId } from "react";
 import {View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList } from "react-native";
-import { db } from "./firebaseConnection";
+import { db, auth } from "./firebaseConnection";
 import { doc, getDoc, onSnapshot, setDoc, collection, addDoc, getDocs, snapshotEqual, updateDoc } from "firebase/firestore";
 import  { UsersList } from "./users"
+import {signOut} from "firebase/auth"
 
 export function FormUsers(){
 const [nome, setNome] = useState("");
@@ -77,6 +78,10 @@ async function handleEditUsers(){
     setIsEditing("");
 }
 
+async function handleLogout(){
+    await signOut(auth);
+}
+
 
 return(
     <View style={styles.container}>
@@ -132,48 +137,66 @@ return(
     keyExtractor={ (item) => String(item.id)}
     renderItem={ ({ item}) => <UsersList  data={item}  handleEdit={ (item) => editUsers(item) }/> }
     />
+
+    <TouchableOpacity onPress={handleLogout} style={styles.ButtonLogout}>
+        <Text style={styles.textLogout}>Sair da conta</Text>
+    </TouchableOpacity>
+
+
     </View>
 );
 } 
 
 const styles = StyleSheet.create({ 
-container: {
-    flex: 1, 
-},
+    container: {
+        flex: 1, 
+    },
 
-button: {
-    backgroundColor: '#000',  
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    marginLeft: 8,
-    marginRight: 8, 
-    borderRadius: 4
-}, 
+    button: {
+        backgroundColor: '#000',  
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        marginLeft: 8,
+        marginRight: 8, 
+        borderRadius: 4
+    }, 
 
-text1: {
-    fontSize: 15, 
-    color: "white", 
-    padding: 8, 
-}, 
+    text1: {
+        fontSize: 15, 
+        color: "white", 
+        padding: 8, 
+    }, 
 
-label: {
-    color: "#000", 
-    fontSize: 16, 
-    marginBottom: 4, 
-    marginLeft: 8,
-},
+    label: {
+        color: "#000", 
+        fontSize: 16, 
+        marginBottom: 4, 
+        marginLeft: 8,
+    },
 
-input1: {
-    borderWidth: 1, 
-    borderRadius: 10, 
-    marginLeft: 8, 
-    marginRight: 8,
-    marginBottom: 8,
-}, 
+    input1: {
+        borderWidth: 1, 
+        borderRadius: 10, 
+        marginLeft: 8, 
+        marginRight: 8,
+        marginBottom: 8,
+    }, 
 
-list: {
-    marginTop: 8,
-    marginLeft: 8,
-    marginRight: 8,
-}
+    list: {
+        marginTop: 8,
+        marginLeft: 8,
+        marginRight: 8,
+    }, 
+
+    ButtonLogout: {
+        backgroundColor: "red", 
+        alignSelf: 'flex-start', 
+        margin: 14, 
+        padding: 8, 
+        borderRadius: 4
+    }, 
+
+    textLogout: {
+        color: '#fff'
+    },
 })
